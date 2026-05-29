@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>偵探部門 — AKECHI ANALYTICAL LABORATORY v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Noto+Sans+JP:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\')']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+:root{--bg:#060607;--panel:#0C0C0E;--red:#8A0010;--crimson:#C62828;--white:#E8E8EA;--dim:#6E6E72;--border:#1A1A1C;--safe-t:env(safe-area-inset-top);--safe-b:env(safe-area-inset-bottom)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--white);font-family:'Noto Sans JP',sans-serif;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:1000}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;color:inherit;cursor:pointer;font-family:inherit}
+/* ── Scanline grid ── */
+.lab-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(138,0,16,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(138,0,16,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+/* ── Lang switcher ── */
+#lang-mount{position:fixed;top:12px;right:12px;z-index:900;display:flex;gap:4px}
+.lang-btn{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.1em;border:1px solid var(--border);color:var(--dim);padding:5px 10px;min-height:28px;transition:color .2s,border-color .2s;touch-action:manipulation}
+.lang-btn.active,.lang-btn:hover{border-color:var(--red);color:var(--white)}
+/* ── Layout ── */
+.container{max-width:980px;margin:0 auto;padding:clamp(24px,6vw,56px) clamp(16px,4vw,40px);position:relative;z-index:1}
+/* ── Back link ── */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.2em;color:var(--dim);border:1px solid var(--border);padding:9px 18px;margin-bottom:40px;min-height:40px;touch-action:manipulation;transition:color .2s,border-color .2s}
+.back-link:hover{color:var(--white);border-color:var(--red)}
+/* ── Dept header ── */
+.dept-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.dept-title{font-family:'Noto Serif JP',serif;font-size:clamp(24px,5vw,36px);font-weight:600;letter-spacing:.08em;line-height:1.2;margin-bottom:6px}
+.dept-subtitle{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.2em;margin-bottom:40px}
+/* ── Profile card ── */
+.profile-card{border:1px solid var(--border);border-left:3px solid var(--red);padding:24px;margin-bottom:48px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+@media(max-width:640px){.profile-card{grid-template-columns:1fr;gap:16px}}
+.profile-avatar{width:72px;height:72px;border-radius:50%;border:2px solid var(--border);background:var(--panel);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.05em;color:var(--red);flex-shrink:0;contain:content}
+.profile-avatar span{font-size:28px;display:block}
+.profile-info{}
+.profile-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.2em;color:var(--red);margin-bottom:4px}
+.profile-name{font-family:'Noto Serif JP',serif;font-size:clamp(18px,3vw,24px);font-weight:600;letter-spacing:.1em;margin-bottom:2px}
+.profile-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:10px}
+.profile-desc{font-size:12px;color:var(--dim);line-height:1.7;max-width:480px}
+.profile-stats{display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+@media(max-width:640px){.profile-stats{flex-direction:row;align-items:flex-start}}
+.stat-block{text-align:right}
+@media(max-width:640px){.stat-block{text-align:left}}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;color:var(--white);line-height:1}
+.stat-key{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--dim)}
+/* ── Topology section ── */
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.section-title{font-family:'Noto Serif JP',serif;font-size:clamp(14px,2.5vw,18px);font-weight:600;letter-spacing:.1em;margin-bottom:16px}
+.topology-wrap{position:relative;margin-bottom:48px}
+.topology-hint{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.12em;margin-bottom:8px}
+.topology-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-left:3px solid var(--red);background:var(--panel)}
+.topology-scroll::-webkit-scrollbar{height:3px}
+.topology-scroll::-webkit-scrollbar-track{background:var(--border)}
+.topology-scroll::-webkit-scrollbar-thumb{background:var(--red)}
+#topology-svg{display:block;cursor:pointer;contain:paint}
+.topo-edge{stroke:rgba(138,0,16,.25);stroke-width:1;fill:none;pointer-events:none}
+.topo-node{cursor:pointer}
+.topo-node circle{fill:var(--panel);stroke-width:1.5;transition:all .2s}
+.topo-node text{fill:var(--dim);font-family:'JetBrains Mono',monospace;font-size:9px;text-anchor:middle;dominant-baseline:central;pointer-events:none;transition:fill .2s}
+.topo-node.active circle,.topo-node:hover circle{fill:rgba(138,0,16,.3);stroke-width:2.5}
+.topo-node.active text,.topo-node:hover text{fill:var(--white)}
+.arc-zone-label{font-family:'JetBrains Mono',monospace;font-size:7px;fill:rgba(138,0,16,.4);letter-spacing:.15em}
+/* ── Clinical archive ── */
+.archive-section{margin-bottom:48px}
+.arc-drawer{margin-bottom:6px;contain:content}
+.drawer-handle{width:100%;display:flex;align-items:center;gap:14px;padding:16px 20px;min-height:60px;border:1px solid var(--border);border-left-width:3px;background:var(--panel);cursor:pointer;text-align:left;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .2s}
+.drawer-handle:hover{background:rgba(138,0,16,.06)}
+.drawer-handle.open{background:rgba(138,0,16,.08)}
+.drawer-act{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.15em;color:var(--red);white-space:nowrap;min-width:56px;flex-shrink:0}
+.drawer-title{font-family:'Noto Serif JP',serif;font-size:clamp(13px,2.5vw,16px);font-weight:600;letter-spacing:.08em;flex:1}
+.drawer-range{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);white-space:nowrap;flex-shrink:0}
+.drawer-count{font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:600;color:var(--dim);border:1px solid var(--border);padding:3px 8px;white-space:nowrap;flex-shrink:0}
+.drawer-chevron{font-size:9px;color:var(--dim);transition:transform .35s cubic-bezier(.25,.46,.45,.94);flex-shrink:0;line-height:1}
+.drawer-handle.open .drawer-chevron{transform:rotate(90deg)}
+.drawer-body{height:0;overflow:hidden}
+.case-table{width:100%;border-collapse:collapse}
+.case-row{border-bottom:1px solid rgba(26,26,28,.8);contain:content;transition:background .15s}
+.case-row:last-child{border-bottom:none}
+.case-row:hover{background:rgba(138,0,16,.04)}
+.case-row td{padding:11px 8px;vertical-align:middle}
+.case-num{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--red);opacity:.5;width:48px;white-space:nowrap}
+.case-title-text{font-family:'Noto Serif JP',serif;font-size:clamp(13px,2.5vw,15px);font-weight:600;letter-spacing:.06em;display:block;margin-bottom:1px}
+.case-title-sub{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--dim);display:block}
+.case-year{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);white-space:nowrap;width:52px;text-align:right}
+.case-open{border:1px solid var(--border);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:600;letter-spacing:.12em;padding:7px 14px;min-width:80px;min-height:36px;transition:border-color .2s,color .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.case-open:hover{border-color:var(--red);color:var(--white)}
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;opacity:0;pointer-events:none;transition:opacity .35s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-dossier{position:fixed;top:0;right:0;width:min(540px,100vw);height:100%;background:var(--panel);border-left:1px solid var(--border);z-index:801;transform:translateX(100%);transition:transform .55s cubic-bezier(0.23,1.12,0.32,1);overflow-y:auto;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.modal-dossier.open{transform:translateX(0)}
+@media(max-width:640px){.modal-dossier{top:auto;bottom:0;width:100%;height:90dvh;border-left:none;border-top:1px solid var(--border);transform:translateY(100%);border-radius:12px 12px 0 0}.modal-dossier.open{transform:translateY(0)}}
+.dossier-header{padding:24px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.dossier-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.dossier-file-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:600;letter-spacing:.25em;color:var(--red);margin-bottom:4px}
+.dossier-title{font-family:'Noto Serif JP',serif;font-size:clamp(18px,3vw,24px);font-weight:600;letter-spacing:.08em;line-height:1.2}
+.dossier-sub{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;margin-top:2px}
+.dossier-close{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.12em;color:var(--dim);border:1px solid var(--border);padding:9px 16px;min-height:40px;min-width:70px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:color .2s,border-color .2s;flex-shrink:0}
+.dossier-close:hover{color:var(--white);border-color:var(--red)}
+.dossier-tabs{display:flex;gap:0;padding:0;margin-top:16px}
+.dossier-tab{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.15em;color:var(--dim);padding:10px 20px;border-bottom:2px solid transparent;min-height:38px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:color .2s,border-color .2s;white-space:nowrap}
+.dossier-tab.active{color:var(--white);border-bottom-color:var(--red)}
+.dossier-tab:hover{color:var(--white)}
+.dossier-body{padding:24px;overflow-y:auto;flex:1}
+.dossier-panel{display:none}.dossier-panel.active{display:block}
+.field-group{margin-bottom:20px}
+.field-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:600;letter-spacing:.2em;color:var(--red);text-transform:uppercase;margin-bottom:6px}
+.field-val{font-size:13px;line-height:1.8;color:var(--dim)}
+.field-val-en{font-size:12px;line-height:1.7;color:var(--dim);font-style:italic;margin-top:4px}
+.field-badge{display:inline-block;border:1px solid var(--red);font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--white);padding:3px 10px;margin-top:4px}
+.formula-block{background:rgba(138,0,16,.06);border-left:2px solid var(--red);padding:16px;margin:12px 0;font-size:14px;overflow-x:auto}
+.synopsis-text{font-size:13px;line-height:1.9;color:var(--dim)}
+.synopsis-en{font-size:12px;line-height:1.8;color:rgba(110,110,114,.7);margin-top:12px;font-style:italic}
+.pub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.pub-item{}
+.pub-key{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:600;letter-spacing:.2em;color:var(--red);margin-bottom:3px}
+.pub-val{font-size:12px;color:var(--dim)}
+.keyword-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.keyword-tag{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.08em;color:var(--dim);border:1px solid var(--border);padding:3px 8px}
+</style>
+</head>
+<body>
+<div class="lab-grid" aria-hidden="true"></div>
+<div id="lang-mount"></div>
+
+<div class="container">
+  <a class="back-link" href="../" data-i18n="det_back">← 戻る</a>
+
+  <p class="dept-eyebrow">DEPT_01 / ANALYTICAL LABORATORY</p>
+  <h1 class="dept-title" data-i18n="det_header">偵探部門</h1>
+  <p class="dept-subtitle" data-i18n="det_lab_subtitle">AKECHI ANALYTICAL LABORATORY v2</p>
+
+  <!-- Profile card -->
+  <div class="profile-card">
+    <div class="profile-avatar"><span>明</span></div>
+    <div class="profile-info">
+      <div class="profile-label" data-i18n="det_profile_label">SUBJECT PROFILE</div>
+      <div class="profile-name" data-i18n="det_profile_name">明智小五郎</div>
+      <div class="profile-role" data-i18n="det_profile_title">私家探偵 · 変装の天才</div>
+      <div class="profile-desc" data-i18n="det_profile_desc">大正から昭和にかけて活躍した日本最高峰の名探偵。鋭い心理分析と卓越した変装術を武器に、数々の奇怪な事件を解決してきた。怪人二十面相との宿命的な対立は、江戸川乱歩作品の中心軸をなす。</div>
+    </div>
+    <div class="profile-stats">
+      <div class="stat-block"><div class="stat-val" id="stat-cases">30</div><div class="stat-key" data-i18n="det_stat_cases">事件数</div></div>
+      <div class="stat-block"><div class="stat-val">1925</div><div class="stat-key" data-i18n="det_stat_debut">初登場</div></div>
+      <div class="stat-block"><div class="stat-val" style="font-size:13px;line-height:1.3">二十面相</div><div class="stat-key" data-i18n="det_stat_nemesis">宿敵</div></div>
+    </div>
+  </div>
+
+  <!-- Topology map -->
+  <div class="topology-wrap">
+    <p class="section-eyebrow">CRIMINAL MOTIF NETWORK</p>
+    <h2 class="section-title" data-i18n="det_topology_title">犯罪位相図</h2>
+    <p class="topology-hint">← SCROLL TO EXPLORE — CLICK NODE TO OPEN FILE →</p>
+    <div class="topology-scroll">
+      <svg id="topology-svg" viewBox="0 0 1200 230" width="1200" height="230" aria-label="Crime topology map"></svg>
+    </div>
+  </div>
+
+  <!-- Clinical archive -->
+  <div class="archive-section">
+    <p class="section-eyebrow">CLINICAL ARCHIVE</p>
+    <h2 class="section-title">Case File Registry — 30 Works</h2>
+    <div id="accordions"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" aria-hidden="true"></div>
+<div class="modal-dossier" id="modal-dossier" role="dialog" aria-modal="true" aria-label="Case Dossier">
+  <div class="dossier-header">
+    <div class="dossier-top">
+      <div>
+        <div class="dossier-file-label" id="d-file-label">CASE FILE</div>
+        <div class="dossier-title" id="d-title">—</div>
+        <div class="dossier-sub" id="d-sub">—</div>
+      </div>
+      <button class="dossier-close" id="dossier-close-btn" data-i18n="det_close">× 閉じる</button>
+    </div>
+    <div class="dossier-tabs">
+      <button class="dossier-tab active" data-tab="synopsis" data-i18n="det_tab_synopsis">概要</button>
+      <button class="dossier-tab" data-tab="psych" data-i18n="det_tab_psych">心理分析</button>
+      <button class="dossier-tab" data-tab="pub" data-i18n="det_tab_pub">書誌</button>
+    </div>
+  </div>
+  <div class="dossier-body">
+    <div class="dossier-panel active" id="panel-synopsis"></div>
+    <div class="dossier-panel" id="panel-psych"></div>
+    <div class="dossier-panel" id="panel-pub"></div>
+  </div>
+</div>
+
+<script src="../i18n.js"></script>
+<script>
+// ── Topology node positions (1200×230 viewBox) ──
+const POS = {
+  // dawn arc
+  1:[80,185], 2:[115,120], 3:[155,190], 4:[175,100], 5:[210,175],
+  21:[85,100], 22:[165,65], 23:[250,145],
+  // dark arc
+  6:[320,115], 7:[360,160], 8:[395,110], 9:[435,165], 10:[468,125],
+  24:[335,170], 25:[538,95],
+  // phantom arc
+  11:[618,165], 12:[656,115], 13:[698,175], 14:[728,125], 15:[760,185],
+  16:[796,120], 17:[836,170], 26:[672,210], 27:[776,80], 28:[875,135],
+  // legacy arc
+  18:[965,135], 19:[1015,100], 20:[1056,155], 29:[1104,110], 30:[1150,160]
+};
+
+const ARC_COLORS = {dawn:'#8A0010',dark:'#C62828',phantom:'#7B1FA2',legacy:'#0288D1'};
+
+const TOPOLOGY_EDGES = [
+  [2,3],[2,1],[3,1],
+  [6,7],[7,8],[8,9],[9,10],[10,24],[25,10],
+  [6,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],
+  [26,11],[27,16],[28,12],
+  [10,11],[9,10],
+  [18,19],[19,29],[29,30],[17,18],[20,18],[30,28],
+  [21,2],[22,21],[4,9]
+];
+
+const ARC_RANGES = {dawn:'1924—1928',dark:'1928—1934',phantom:'1934—1942',legacy:'1946—1956'};
+const ARC_ACTS   = {dawn:'ACT I',dark:'ACT II',phantom:'ACT III',legacy:'ACT IV'};
+
+let CASES = [];
+let _currentCase = null;
+
+// ── Load data ──
+async function loadCases(){
+  try {
+    const r = await fetch('cases.json');
+    CASES = await r.json();
+    buildTopologySVG(CASES);
+    buildAccordions(CASES);
+  } catch(e){ console.error('Failed to load cases.json', e); }
+}
+
+// ── Build SVG topology ──
+function buildTopologySVG(cases){
+  const svg = document.getElementById('topology-svg');
+
+  // Arc zone backgrounds
+  const zones = [
+    {x:55,w:225,label:'DAWN',arc:'dawn'},
+    {x:295,w:275,label:'DARK',arc:'dark'},
+    {x:590,w:320,label:'PHANTOM',arc:'phantom'},
+    {x:930,w:255,label:'LEGACY',arc:'legacy'}
+  ];
+  zones.forEach(z=>{
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',z.x); rect.setAttribute('y',10);
+    rect.setAttribute('width',z.w); rect.setAttribute('height',210);
+    rect.setAttribute('fill',`rgba(138,0,16,.018)`); rect.setAttribute('rx','2');
+    svg.appendChild(rect);
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',z.x+8); lbl.setAttribute('y',22);
+    lbl.setAttribute('class','arc-zone-label');
+    lbl.textContent = z.label;
+    svg.appendChild(lbl);
+  });
+
+  // Edges
+  TOPOLOGY_EDGES.forEach(([a,b])=>{
+    const pa = POS[a], pb = POS[b];
+    if(!pa||!pb) return;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('class','topo-edge');
+    line.setAttribute('x1',pa[0]); line.setAttribute('y1',pa[1]);
+    line.setAttribute('x2',pb[0]); line.setAttribute('y2',pb[1]);
+    svg.appendChild(line);
+  });
+
+  // Nodes
+  cases.forEach(c=>{
+    const pos = POS[c.id];
+    if(!pos) return;
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','topo-node');
+    g.setAttribute('data-id',c.id);
+    g.setAttribute('role','button');
+    g.setAttribute('aria-label',c.title);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',pos[0]); circle.setAttribute('cy',pos[1]);
+    circle.setAttribute('r','14');
+    circle.setAttribute('stroke', ARC_COLORS[c.arc] || '#8A0010');
+    g.appendChild(circle);
+
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',pos[0]); txt.setAttribute('y',pos[1]);
+    txt.textContent = c.id;
+    g.appendChild(txt);
+
+    // Tooltip title below
+    const ttl = document.createElementNS('http://www.w3.org/2000/svg','title');
+    ttl.textContent = `#${c.id} ${c.title} (${c.year})`;
+    g.appendChild(ttl);
+
+    g.addEventListener('click', ()=>openDossier(c));
+    g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') openDossier(c); });
+    svg.appendChild(g);
+  });
+}
+
+// ── Build accordions ──
+function buildAccordions(cases){
+  const arcs = ['dawn','dark','phantom','legacy'];
+  const container = document.getElementById('accordions');
+  const lang = getLang();
+
+  arcs.forEach((arc,i)=>{
+    const arcCases = cases.filter(c=>c.arc===arc);
+    const drawer = document.createElement('div');
+    drawer.className = 'arc-drawer';
+    drawer.dataset.arc = arc;
+
+    const titleKey = `det_arc_${arc}`;
+    const titleText = t(titleKey);
+
+    drawer.innerHTML = `
+      <button class="drawer-handle" style="border-left-color:${ARC_COLORS[arc]}"
+              onclick="toggleDrawer(this)" aria-expanded="false">
+        <span class="drawer-act">${ARC_ACTS[arc]}</span>
+        <span class="drawer-title">${titleText}</span>
+        <span class="drawer-range">${ARC_RANGES[arc]}</span>
+        <span class="drawer-count">${arcCases.length}${t('det_drawer_cases')}</span>
+        <span class="drawer-chevron">▶</span>
+      </button>
+      <div class="drawer-body">
+        <table class="case-table">${renderCaseTable(arcCases, lang)}</table>
+      </div>`;
+    container.appendChild(drawer);
+  });
+}
+
+function renderCaseTable(arcCases, lang){
+  return arcCases.map(c=>{
+    const title = lang==='zh' ? c.titleZh : (lang==='en' ? c.titleEn : c.title);
+    const sub   = lang==='en' ? c.title : c.titleEn;
+    return `<tr class="case-row">
+      <td class="case-num">FILE #${String(c.id).padStart(2,'0')}</td>
+      <td><span class="case-title-text">${title}</span><span class="case-title-sub">${sub}</span></td>
+      <td class="case-year">${c.year}</td>
+      <td><button class="case-open" onclick="openDossierById(${c.id})" data-i18n="det_open_dossier">OPEN FILE</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleDrawer(btn){
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  if(isOpen){
+    body.style.height = body.scrollHeight + 'px';
+    body.offsetHeight; // force reflow
+    body.style.transition = 'height .35s cubic-bezier(.25,.46,.45,.94)';
+    body.style.height = '0';
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    body.addEventListener('transitionend',()=>{ body.style.transition=''; },{once:true});
+  } else {
+    body.style.height = '0';
+    body.style.display = 'block';
+    body.style.transition = 'height .35s cubic-bezier(.25,.46,.45,.94)';
+    body.offsetHeight;
+    body.style.height = body.scrollHeight + 'px';
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    body.addEventListener('transitionend',()=>{ body.style.height='auto'; body.style.transition=''; },{once:true});
+  }
+}
+
+function openDrawerForCase(caseId){
+  const c = CASES.find(x=>x.id===caseId);
+  if(!c) return;
+  const drawer = document.querySelector(`.arc-drawer[data-arc="${c.arc}"]`);
+  if(!drawer) return;
+  const btn = drawer.querySelector('.drawer-handle');
+  if(btn && !btn.classList.contains('open')) toggleDrawer(btn);
+}
+
+// ── Dossier ──
+function openDossierById(id){
+  const c = CASES.find(x=>x.id===id);
+  if(c) openDossier(c);
+}
+
+function openDossier(c){
+  _currentCase = c;
+  const lang = getLang();
+
+  document.getElementById('d-file-label').textContent = `CASE FILE #${String(c.id).padStart(2,'0')} — ${c.arc.toUpperCase()}`;
+  document.getElementById('d-title').textContent = lang==='zh' ? c.titleZh : (lang==='en' ? c.titleEn : c.title);
+  document.getElementById('d-sub').textContent = lang==='en' ? c.title : c.titleEn;
+
+  // Synopsis panel
+  const synKey = lang==='zh'?'synopsisZh':(lang==='en'?'synopsisEn':'synopsisJa');
+  document.getElementById('panel-synopsis').innerHTML = `
+    <p class="synopsis-text">${c[synKey]||c.synopsisJa}</p>
+    ${lang!=='en'?`<p class="synopsis-en">${c.synopsisEn}</p>`:''}
+    <div style="margin-top:16px">
+      <div class="field-label">${t('class_label')}</div>
+      <span class="field-badge">${c.classification}</span>
+    </div>`;
+
+  // Psychology panel
+  const psyKey = lang==='zh'?'psychAnalysisZh':(lang==='en'?'psychAnalysisEn':'psychAnalysisJa');
+  document.getElementById('panel-psych').innerHTML = `
+    <div class="field-group">
+      <div class="field-label">${t('defense_label')}</div>
+      <div class="field-val">${c.defensesMechanism}</div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">${t('formula_label')}</div>
+      <div class="formula-block" id="formula-render">\\(${c.psychFormula}\\)</div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">ANALYSIS</div>
+      <div class="field-val">${c[psyKey]||c.psychAnalysisJa}</div>
+      ${lang!=='en'?`<div class="field-val-en">${c.psychAnalysisEn}</div>`:''}
+    </div>`;
+
+  // Publication panel
+  document.getElementById('panel-pub').innerHTML = `
+    <div class="pub-grid">
+      <div class="pub-item"><div class="pub-key">${t('year_label')}</div><div class="pub-val">${c.year}</div></div>
+      <div class="pub-item"><div class="pub-key">${t('pub_label')}</div><div class="pub-val">${c.publishedIn}<br><span style="opacity:.5">${c.publishedInEn}</span></div></div>
+      <div class="pub-item"><div class="pub-key">${t('role_label')}</div><div class="pub-val">${c.kogoro_role}</div></div>
+      <div class="pub-item"><div class="pub-key">${t('victim_label')}</div><div class="pub-val">${c.victim_profile}</div></div>
+    </div>
+    ${c.motifs?`<div style="margin-top:16px"><div class="pub-key">MOTIF NODES</div><div class="keyword-list">${c.motifs.map(m=>`<span class="keyword-tag">${m}</span>`).join('')}</div></div>`:''}`;
+
+  activateTab('synopsis');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-dossier').classList.add('open');
+  document.getElementById('modal-overlay').removeAttribute('aria-hidden');
+  document.getElementById('modal-dossier').setAttribute('aria-hidden','false');
+
+  // Highlight topology node
+  document.querySelectorAll('.topo-node').forEach(n=>n.classList.remove('active'));
+  const node = document.querySelector(`.topo-node[data-id="${c.id}"]`);
+  if(node) node.classList.add('active');
+}
+
+function closeDossier(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-dossier').classList.remove('open');
+  document.getElementById('modal-overlay').setAttribute('aria-hidden','true');
+  document.getElementById('modal-dossier').setAttribute('aria-hidden','true');
+  document.querySelectorAll('.topo-node').forEach(n=>n.classList.remove('active'));
+  _currentCase = null;
+}
+
+function activateTab(name){
+  document.querySelectorAll('.dossier-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.dossier-panel').forEach(p=>p.classList.toggle('active', p.id===`panel-${name}`));
+  if(name==='psych' && window.MathJax){
+    const el = document.getElementById('formula-render');
+    if(el) MathJax.typesetPromise([el]).catch(()=>{});
+  }
+}
+
+// ── Event wiring ──
+document.getElementById('modal-overlay').addEventListener('click', closeDossier);
+document.getElementById('dossier-close-btn').addEventListener('click', closeDossier);
+document.querySelectorAll('.dossier-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>activateTab(btn.dataset.tab));
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDossier(); });
+
+// ── Init ──
+window.addEventListener('load', ()=>{
+  initLangSwitcher('lang-mount');
+  loadCases();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Project Kogoro | 江戸川乱歩 デジタルアーカイブ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Noto+Sans+JP:wght@300;400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0B0C;
+      --red: #8A0010;
+      --crimson: #D32F2F;
+      --white: #F5F5F7;
+      --border: #2C2C2E;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top,16px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,16px) env(safe-area-inset-left,16px);
+    }
+    /* Lang Switcher */
+    .lang-switcher {
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 200;
+    }
+    .lang-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      opacity: 0.4;
+      text-transform: uppercase;
+    }
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 32px;
+    }
+    .lang-btn.active, .lang-btn:hover { border-color: var(--red); color: var(--red); }
+    /* Main */
+    .main-container {
+      text-align: center;
+      width: 100%;
+      max-width: 900px;
+      padding: 60px 24px 40px;
+    }
+    h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(38px, 10vw, 72px);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--red);
+      margin-bottom: 24px;
+      text-shadow: 0 0 40px rgba(138,0,16,.4);
+    }
+    .subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 2vw, 12px);
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      opacity: .5;
+      margin-bottom: 48px;
+    }
+    .tagline {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(13px, 3vw, 18px);
+      line-height: 2;
+      margin-bottom: 60px;
+      opacity: .7;
+      letter-spacing: .1em;
+    }
+    .departments {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 600px) {
+      .departments { grid-template-columns: 1fr; }
+      .main-container { padding: 56px 16px 32px; }
+    }
+    .dept-card {
+      background: var(--bg);
+      padding: clamp(24px,6vw,60px) clamp(18px,5vw,40px);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--white);
+      transition: border-color .35s cubic-bezier(.23,1,.32,1), box-shadow .35s cubic-bezier(.23,1,.32,1), transform .35s cubic-bezier(.23,1,.32,1);
+      position: relative;
+      overflow: hidden;
+      display: block;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dept-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(138,0,16,.18), transparent);
+      transition: left .6s;
+    }
+    @media (hover: hover) {
+      .dept-card:hover::before { left: 100%; }
+      .dept-card:hover { border-color: var(--red); box-shadow: 0 0 40px rgba(138,0,16,.4); transform: translateY(-4px); }
+    }
+    .dept-card:active { transform: scale(.98); }
+    .dept-number { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .2em; color: var(--red); margin-bottom: 16px; opacity: .8; }
+    .dept-title { font-family: 'Noto Serif JP', serif; font-size: clamp(20px,5vw,32px); font-weight: 600; letter-spacing: .15em; margin-bottom: 10px; }
+    .dept-title-en { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: .5; letter-spacing: .08em; margin-bottom: 20px; }
+    .dept-description { font-size: clamp(12px,2.5vw,14px); line-height: 1.8; opacity: .7; margin-top: 16px; }
+    .footer { margin-top: 60px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .2em; opacity: .3; }
+  </style>
+</head>
+<body>
+  <div id="lang-mount"></div>
+
+  <div class="main-container">
+    <header>
+      <h1 data-i18n="landing_title">江戸川乱歩</h1>
+      <p class="subtitle" data-i18n="landing_subtitle">Project Kogoro / Digital Archive</p>
+    </header>
+    <p class="tagline">
+      <span data-i18n="landing_tagline1">理智と狂気の臨界点。</span><br>
+      <span data-i18n="landing_tagline2">大正モダンの闇を、デジタルの冷徹さで解剖する。</span>
+    </p>
+    <nav class="departments">
+      <a href="detective/index.html" class="dept-card">
+        <div class="dept-number" data-i18n="dept01_num">DEPT_01</div>
+        <h2 class="dept-title" data-i18n="dept01_title">偵探部門</h2>
+        <p class="dept-title-en" data-i18n="dept01_en">Detective Department</p>
+        <p class="dept-description" data-i18n="dept01_desc">精神鑑定記録。心理測驗と犯罪公式。<br>本格推理の数学的構造。</p>
+      </a>
+      <a href="erotic-grotesque/index.html" class="dept-card">
+        <div class="dept-number" data-i18n="dept02_num">DEPT_02</div>
+        <h2 class="dept-title" data-i18n="dept02_title">異色部門</h2>
+        <p class="dept-title-en" data-i18n="dept02_en">Erotic-Grotesque Department</p>
+        <p class="dept-description" data-i18n="dept02_desc">物化と窺視の病理学。<br>潛意識の暴走アーカイブ。</p>
+      </a>
+    </nav>
+    <footer class="footer" data-i18n="footer_sig">SAYORI → KOGORO → [RATIONAL MADNESS INTERFACE]</footer>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initLangSwitcher('lang-mount');
+      applyI18n();
+    });
+  </script>
+</body>
+</html>
